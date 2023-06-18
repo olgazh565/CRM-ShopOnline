@@ -1,0 +1,139 @@
+.main {
+    padding-bottom: 30px;
+}
+
+.main__container {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.tool-bar {
+    display: grid;
+    grid-template-columns: 108px 392px 1fr;
+    gap: 20px;
+    padding: 15px 20px;
+}
+
+.tool-bar__filter-btn {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #25213B;
+    background: #FFFFFF;
+    border: 1px solid #C6C2DE;
+    border-radius: 6px;
+    width: 108px;
+    height: 40px;
+    padding: 10px 10px 10px 40px;
+    background: url('../imgs/filter.svg') center left 10px/20px no-repeat;
+    outline: 2px solid transparent;
+}
+
+.tool-bar__filter-btn:hover,
+.tool-bar__filter-btn:focus,
+.tool-bar__filter-btn:active {
+    outline: 2px solid #6D5BD0;
+}
+
+.tool-bar__search {
+    background: #F4F2FF;
+    border-radius: 6px;
+    display: grid;
+    grid-template-columns: 40px auto;
+    align-items: center;
+    outline: 2px solid transparent;
+}
+
+.search:hover,
+.search:focus,
+.search:active {
+    outline: 2px solid #6D5BD0;
+}
+
+
+.search__button {
+    height: 100%;
+    background: url('../imgs/search.svg') center/20px no-repeat;
+    border: 0;
+    outline: 0;
+}
+
+.search__input {
+    width: 100%;
+    padding: 13px 20px 12px 0;
+    background: transparent;
+    outline: 0;
+    border: 0;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: #6E6893;
+}
+
+.search__input::placeholder {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: #6E6893;
+}
+
+.add-button {
+    display: block;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    width: 200px;
+    padding: 10px;    
+    background: #6D5BD0;
+    border-radius: 6px;
+    border: 0;
+    outline: 1px solid transparent;    
+}
+
+.add-button:hover,
+.add-button:focus,
+.add-button:active {
+    background-color: #4430b7;
+    outline: 1px solid #1a068c;
+}
+
+.tool-bar__add-button {
+    justify-self: end;
+}
+
+@media (max-width: 845px) {
+    .tool-bar {
+        grid-template-columns: min-content 1fr;
+        grid-template-areas: 
+            'filter search'
+            'add-btn add-btn';
+        gap: 20px;
+    }
+
+    .tool-bar__filter-btn {
+        grid-area: filter;
+    }
+
+    .tool-bar__search {
+        grid-area: search;
+    }
+
+    .tool-bar__add-button {
+        grid-area: add-btn;
+        justify-self: start;
+    }
+}
+
+@media (max-width: 510px) {
+    .tool-bar {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            'filter'
+            'search'
+            'add-btn';
+    }
+}
