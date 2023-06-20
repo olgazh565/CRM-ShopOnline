@@ -12,6 +12,7 @@
     <link rel="preload" href="./assets/fonts/inter-600.woff2" as="font" type="font/woff" crossorigin>
     <link rel="preload" href="./assets/fonts/inter-700.woff2" as="font" type="font/woff" crossorigin>
     <link rel="stylesheet" href="./assets/css/style.css">
+    <script defer src="assets/scripts/main.js"></script>
 </head>
 
 <body>
@@ -138,11 +139,16 @@
         </div>
     </main>
 
-    <div class="overlay">
+    <div class="overlay overlay-active">
         <div class="modal">
             <div class="modal__container">
-                <p class="modal__heading">Добавить товар</p>
-
+                <div class="modal__header">
+                    <p class="modal__title">Добавить товар</p>
+                    <div class="modal__id">
+                        <p class="modal__id-text">id:</p>
+                        <p class="modal__id-number">201910241</p>
+                    </div>
+                </div>
                 <button class="modal__close-btn" type="button" aria-label="закрыть окно">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
                         xmlns="http://www.w3.org/2000/svg">

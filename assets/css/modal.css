@@ -1,13 +1,16 @@
 .overlay {
     position: fixed;
     inset: 0;
-    background:rgba(0, 0, 0, .7);
+    background: rgba(0, 0, 0, .7);
     width: 100%;
     height: 100%;
-    /* display: flex; */
-    display: none;
     justify-content: center;
     align-items: center;
+}
+
+.overlay-active {
+    display: flex;
+    /* display: none; */
 }
 
 .modal {
@@ -15,7 +18,7 @@
 }
 
 .modal__container {
-    position: relative;    
+    position: relative;
     min-height: 613px;
     max-width: 792px;
     padding: 32px 106px 39px;
@@ -23,15 +26,32 @@
     box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.25);
 }
 
-.modal__heading {
+.modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 21px;
+    border-bottom: 1px solid #C6C2DE;
+    margin-bottom: 21px;
+}
+
+.modal__title {
     font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 24px;
     line-height: 29px;
     letter-spacing: 0.1em;
-    padding-bottom: 21px;
-    border-bottom: 1px solid #C6C2DE;
-    margin-bottom: 21px;
+}
+
+.modal__id {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3px;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 12px;
+    color: #C5C5C5;
 }
 
 .modal__close-btn {
@@ -44,8 +64,8 @@
     outline: 1px solid transparent;
 }
 
-.modal__close-btn:hover, 
-.modal__close-btn:focus, 
+.modal__close-btn:hover,
+.modal__close-btn:focus,
 .modal__close-btn:active {
     outline: 1px solid #6D5BD0;
     outline-offset: 3px;
@@ -163,7 +183,7 @@
     opacity: 1
 }
 
-.form__checkbox:checked ~ .form__input:disabled {
+.form__checkbox:checked~.form__input:disabled {
     background-color: #F4F2FF;
 }
 
@@ -187,7 +207,7 @@
     text-transform: uppercase;
     color: #FFFFFF;
     width: 250px;
-    padding: 10px;    
+    padding: 10px;
     background: #6D5BD0;
     border-radius: 6px;
     outline: 1px solid transparent;
@@ -246,7 +266,7 @@
         grid-template-rows: auto;
         gap: 12px;
     }
-    
+
     .form__item_name {
         grid-row: 1 / 2;
     }
@@ -280,4 +300,4 @@
         max-width: 792px;
         padding: 32px 20px 39px;
     }
-}    
+}
