@@ -12,6 +12,17 @@
     background-color: #F4F2FF;
     border-top: 1px solid #D9D5EC;
     border-bottom: 1px solid #D9D5EC;
+    hyphens: auto;
+}
+
+.heading__count {
+    max-width: 80px;
+    text-align: center;
+}
+
+.heading__price,
+.heading__total {
+    text-align: center;
 }
 
 .table__headline {
