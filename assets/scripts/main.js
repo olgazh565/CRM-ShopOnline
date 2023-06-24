@@ -60,7 +60,6 @@ const goodsArray = [
 ];
 
 const createRow = (obj) => {
-    const totalCount = obj.price * obj.count;
     const row = document.createElement('tr');
     row.className = 'table__row';
     row.innerHTML = `
@@ -70,7 +69,7 @@ const createRow = (obj) => {
         <td class="products__units">${obj.units}</td>
         <td class="products__count">${obj.count}</td>
         <td class="products__price">${obj.price}</td>
-        <td class="products__total">${totalCount}</td>
+        <td class="products__total">${obj.price * obj.count}</td>
         <td class="products__image">
             <button class="products__btn products__image-btn products"
                 type="button"></button>
@@ -95,4 +94,27 @@ const renderGoods = (objArray) => {
 
 renderGoods(goodsArray);
 
+// Работа с модалкой
+
+const modalOpenBTN = document.querySelector('.tool-bar__add-button');
+const modalCloseBTN = document.querySelector('.modal__close-btn');
+const modalOverlay = document.querySelector('.overlay');
+const modal = document.querySelector('.modal');
+
+
+modalOpenBTN.addEventListener('click', () => {
+    modalOverlay.classList.add('modal-visible');
+});
+
+modalCloseBTN.addEventListener('click', () => {
+    modalOverlay.classList.remove('modal-visible');
+});
+
+modalOverlay.addEventListener('click', (e) => {
+    modalOverlay.classList.remove('modal-visible');
+});
+
+modal.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
 
