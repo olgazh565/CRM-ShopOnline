@@ -90,31 +90,50 @@ const createRow = (obj) => {
 const renderGoods = (objArray) => {
     const tBody = document.querySelector('.table__products');
     objArray.map(item => tBody.append(createRow(item)));
-};
 
-renderGoods(goodsArray);
+    return tBody;
+};
 
 // Работа с модалкой
 
-const modalOpenBTN = document.querySelector('.tool-bar__add-button');
-const modalCloseBTN = document.querySelector('.modal__close-btn');
-const modalOverlay = document.querySelector('.overlay');
-const modal = document.querySelector('.modal');
+const controlModal = () => {
+    const modalOpenBtn = document.querySelector('.tool-bar__add-button');
+    const modalOverlay = document.querySelector('.overlay');
 
+    modalOpenBtn.addEventListener('click', () => {
+        modalOverlay.classList.add('modal-visible');
+    });
 
-modalOpenBTN.addEventListener('click', () => {
-    modalOverlay.classList.add('modal-visible');
-});
+    modalOverlay.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target === modalOverlay ||
+            target.closest('.modal__close-btn')) {
+            modalOverlay.classList.remove('modal-visible');
+        }
+    });
+};
 
-modalCloseBTN.addEventListener('click', () => {
-    modalOverlay.classList.remove('modal-visible');
-});
+controlModal();
 
-modalOverlay.addEventListener('click', (e) => {
-    modalOverlay.classList.remove('modal-visible');
-});
+// Удаление строк
 
-modal.addEventListener('click', (e) => {
-    e.stopPropagation();
-});
+const deleteRow = (array) => {
+    const tBody = renderGoods(array);
+
+    tBody.addEventListener('click', e => {
+        const target = e.target;
+        const deleteBtn = target.closest('.products__delete-btn');
+        const tableRow = target.closest('.table__row');
+        if (deleteBtn) {
+            tableRow.remove();
+        }
+
+        const id = +tableRow.children[0].textContent;
+        array = array.filter(item => item.id !== id);
+
+        console.log('NewGoodsArray:', array);
+    });
+};
+
+deleteRow(goodsArray);
 
