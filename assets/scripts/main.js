@@ -124,14 +124,15 @@ const deleteRow = (array) => {
         const target = e.target;
         const deleteBtn = target.closest('.products__delete-btn');
         const tableRow = target.closest('.table__row');
+        const id = +tableRow.children[0].textContent;
+
         if (deleteBtn) {
             tableRow.remove();
         }
 
-        const id = +tableRow.children[0].textContent;
         array = array.filter(item => item.id !== id);
 
-        console.log('NewGoodsArray:', array);
+        console.log('БД после удаления поля:', array);
     });
 };
 
