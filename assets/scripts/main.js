@@ -238,8 +238,10 @@ const countModalTotal = (form) => {
     let calc = 0;
 
     form.addEventListener('focusout', () => {
-        calc = price.value * count.value * (1 - discount.value / 100);
-        totalCount.textContent = calc;
+        calc = (
+            price.value * count.value * (1 - discount.value / 100)
+        ).toFixed(2);
+        totalCount.textContent = calc > 0 ? calc : 0;
     });
 };
 
