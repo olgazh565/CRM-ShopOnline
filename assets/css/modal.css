@@ -45,10 +45,6 @@
 }
 
 .modal__id {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 3px;
     font-weight: 600;
     font-size: 10px;
     line-height: 12px;
@@ -230,10 +226,12 @@
 
 .total {
     display: flex;
+    align-items: baseline;
+    gap: 5px;
     line-height: 1.21;
 }
 
-.total-text {
+.total__text {
     font-weight: 500;
     font-size: 14px;
     text-transform: none;
@@ -241,7 +239,7 @@
     margin-right: 5px;
 }
 
-.total-count {
+.total__data {
     font-weight: 700;
     font-size: 18px;
     color: #6D5BD0;

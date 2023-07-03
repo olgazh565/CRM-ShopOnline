@@ -22,7 +22,10 @@
                 <h1 class="header__title">CMS</h1>
                 <div class="header__total">
                     <p class="header__total-text">Итоговая стоимость:</p>
-                    <p class="header__total-count">$ 900</p>
+                    <p class="header__total-data">
+                        <span class="header__total-currency">$</span>
+                        <span class="header__total-count">900</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -144,10 +147,6 @@
             <div class="modal__container">
                 <div class="modal__header">
                     <p class="modal__title">Добавить товар</p>
-                    <div class="modal__id">
-                        <p class="modal__id-text">id:</p>
-                        <p class="modal__id-number">201910241</p>
-                    </div>
                 </div>
                 <button class="modal__close-btn" type="button" aria-label="закрыть окно">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
@@ -162,8 +161,8 @@
 
                     <fieldset class="form__fieldset">
                         <div class="form__item form__item_name">
-                            <label class="form__label" for="name">Наименование</label>
-                            <input class="form__input" type="text" name="name" id="name" required>
+                            <label class="form__label" for="title">Наименование</label>
+                            <input class="form__input" type="text" name="title" id="title" required>
                         </div>
                         <div class="form__item form__item_category">
                             <label class="form__label" for="category">Категория</label>
@@ -174,10 +173,10 @@
                             <input class="form__input" type="text" name="units" id="units" required>
                         </div>
                         <div class="form__item">
-                            <label class="form__label form__label_checkbox" for="discount">Дисконт</label>
+                            <label class="form__label form__label_checkbox" for="discont">Дисконт</label>
                             <div class="form__checkbox-wrapper">
                                 <input class="form__checkbox" type="checkbox" aria-label="Добавить скидку">
-                                <input class="form__input" type="number" name="discount" id="discount" disabled>
+                                <input class="form__input form__input_checkbox" type="number" name="discont" id="discont" required>
                             </div>
                         </div>
                         <div class="form__item form__item_description">
@@ -194,14 +193,17 @@
                         </div>
                         <div class="form__item form__item_add-image">
                             <label class="form__label-add-image" for="image" tabindex="0">добавить изображение</label>
-                            <input class="form__input-add-image" id="image" type="file" name="image">
+                            <input class="form__input-add-image" id="image" type="file" name="images" accept="image/*">
                         </div>
                     </fieldset>
 
                     <div class="form__footer">
                         <div class="form__total total">
-                            <p class="form__total-text total-text">Итоговая стоимость:</p>
-                            <p class="form__total-count total-count">$ 900</p>
+                            <p class="total__text">Итоговая стоимость:</p>
+                            <p class="total__data">
+                                <span class="total__currency">$</span>
+                                <span class="total__count">900.00</span>
+                            </p>
                         </div>
                         <button class="form__add-button add-button" type="submit">Добавить товар</button>
                     </div>
