@@ -1,6 +1,15 @@
-'use strict';
+import {renderGoods} from './modules/render.js';
+import {countModalTotal, countTableTotal} from './modules/services.js';
+import {domElements} from './modules/domElements.js';
+import {
+    controlModal,
+    blockCheckbox,
+    controlCheckbox,
+    formControl,
+    deleteRow,
+} from './modules/controls.js';
 
-let data = [
+export const data = [
     {
         'id': 253842678,
         'title': 'Смартфон Xiaomi 11T 8/128GB',
@@ -59,200 +68,14 @@ let data = [
     },
 ];
 
-// Добавление товара в БД
-
-const addItemData = item => {
-    data.push(item);
-    console.log(data);
-
-    return data;
-};
-
-// Создание строк с товарами, верстка
-
-const createRow = (obj) => {
-    const row = document.createElement('tr');
-    const totalCount = obj.price * obj.count * (1 - obj.discont / 100);
-    row.className = 'table__row';
-    row.innerHTML = `
-        <td class="products__id">${obj.id}</td>
-        <td class="products__name">${obj.title}</td>
-        <td class="products__category">${obj.category}</td>
-        <td class="products__units">${obj.units}</td>
-        <td class="products__count">${obj.count}</td>
-        <td class="products__price">${obj.price}</td>
-        <td class="products__total">${totalCount}</td>
-        <td class="products__image">
-            <button class="products__btn products__image-btn products"
-                type="button"></button>
-        </td>
-        <td class="products__edit">
-            <button class="products__btn products__edit-btn"
-                type="button"></button>
-        </td>
-        <td class="products__delete">
-            <button class="products__btn products__delete-btn"
-                type="button"></button>
-        </td>    
-        `;
-
-    return row;
-};
-
-// Отрисовка товаров на странице
-
-const renderGoods = (data) => {
-    const tBody = document.querySelector('.table__products');
-    tBody.innerHTML = '';
-    data.map(item => tBody.append(createRow(item)));
-
-    return tBody;
-};
-
-// Добавление товара в таблицу из формы
-
-const addItemPage = (item, tBody) => {
-    tBody.append(createRow(item));
-};
-
-// Подсчет общей стоимости в таблице
-
-const countTableTotal = (array) => {
-    const totalCountPage = document.querySelector('.header__total-count');
-
-    const totalCount = array.reduce((acc, item) =>
-        acc + +item.price * +item.count * (1 - +item.discont / 100), 0);
-
-    totalCountPage.textContent = totalCount;
-};
-
-// Удаление строки из таблицы и товара из БД
-
-const deleteRow = (tBody) => {
-    tBody.addEventListener('click', e => {
-        const target = e.target;
-        const deleteBtn = target.closest('.products__delete-btn');
-        const tableRow = target.closest('.table__row');
-        const id = tableRow.children[0].textContent;
-        console.log('id: ', id);
-
-        if (deleteBtn) {
-            tableRow.remove();
-        }
-
-        data = data.filter(item => +item.id !== +id);
-
-        console.log('БД после удаления поля:', data);
-    });
-};
-
-// Работа с модалкой
-
-const controlModal = () => {
-    const modalOpenBtn = document.querySelector('.tool-bar__add-button');
-    const modalOverlay = document.querySelector('.overlay');
-
-    const openModal = () => {
-        modalOverlay.classList.add('modal-visible');
-    };
-
-    const closeModal = () => {
-        modalOverlay.classList.remove('modal-visible');
-    };
-
-    modalOpenBtn.addEventListener('click', () => {
-        openModal();
-    });
-
-    modalOverlay.addEventListener('click', (e) => {
-        const target = e.target;
-        if (target === modalOverlay ||
-            target.closest('.modal__close-btn')) {
-            closeModal();
-        }
-    });
-
-    return {
-        closeModal,
-    };
-};
-
-// Управление чекбоксом
-
-const blockCheckbox = () => {
-    const discountCheckbox = document.querySelector('.form__checkbox');
-    const discountInput = document.querySelector('.form__input_checkbox');
-    discountCheckbox.checked = false;
-    discountInput.disabled = true;
-
-    return {
-        discountCheckbox,
-        discountInput,
-    };
-};
-
-const controlCheckbox = () => {
-    const {discountCheckbox, discountInput} = blockCheckbox();
-
-    discountCheckbox.addEventListener('change', () => {
-        discountInput.value = '';
-        discountInput.disabled = !discountCheckbox.checked;
-    });
-};
-
-// Добавление товара в модалке + добавление товара в БД,
-// пересчет стоимости всей таблицы
-
-const formControl = (form, tBody, closeModal) => {
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-
-        if (!formData.has('discont')) {
-            formData.set('discont', 0);
-        }
-        if (!formData.has('id')) {
-            formData.set('id', Math.round(Math.random() * 1e9));
-        }
-
-        const newItem = Object.fromEntries(formData);
-
-        const newData = addItemData(newItem);
-        console.log('newData: ', newData);
-        addItemPage(newItem, tBody);
-        countTableTotal(newData);
-        form.reset();
-        closeModal();
-        blockCheckbox();
-    });
-};
-
-//  Подсчет общей стоимости в модалке
-
-const countModalTotal = (form) => {
-    const totalCount = document.querySelector('.total__count');
-    const price = document.querySelector('#price');
-    const count = document.querySelector('#count');
-    const discount = document.querySelector('#discont');
-
-    let calc = 0;
-
-    form.addEventListener('focusout', () => {
-        calc = (
-            price.value * count.value * (1 - discount.value / 100)
-        ).toFixed(2);
-        totalCount.textContent = calc > 0 ? calc : 0;
-    });
-};
-
 const init = (data) => {
-    const form = document.querySelector('.modal__form');
+    const {form} = domElements();
     const tBody = renderGoods(data);
     const {closeModal} = controlModal();
 
     formControl(form, tBody, closeModal);
     countTableTotal(data);
-    deleteRow(tBody);
+    deleteRow(data, tBody);
     controlCheckbox();
     blockCheckbox();
     countModalTotal(form);

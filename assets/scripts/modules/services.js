@@ -1,0 +1,32 @@
+import {domElements} from './domElements.js';
+
+// Подсчет общей стоимости в таблице
+
+export const countTableTotal = (array) => {
+    const {totalCountPage} = domElements();
+
+    const totalCount = array.reduce((acc, item) =>
+        acc + +item.price * +item.count * (1 - +item.discont / 100), 0);
+
+    totalCountPage.textContent = totalCount;
+};
+
+//  Подсчет общей стоимости в модалке
+
+export const countModalTotal = (form) => {
+    const {
+        totalCount,
+        price,
+        count,
+        discount,
+    } = domElements();
+
+    let calc = 0;
+
+    form.addEventListener('focusout', () => {
+        calc = (
+            price.value * count.value * (1 - discount.value / 100)
+        ).toFixed(2);
+        totalCount.textContent = calc > 0 ? calc : 0;
+    });
+};
