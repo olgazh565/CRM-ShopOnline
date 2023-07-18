@@ -100,14 +100,13 @@ export const deleteRow = (data, tBody) => {
         const target = e.target;
         const deleteBtn = target.closest('.products__delete-btn');
         const tableRow = target.closest('.table__row');
-        const id = tableRow.children[0].textContent;
+        const id = tableRow.cells[0].textContent;
         console.log('id: ', id);
 
         if (deleteBtn) {
             tableRow.remove();
 
             const index = data.findIndex(item => item.id === +id);
-
             data.splice(index, 1);
 
             console.log('БД после удаления поля:', data);
