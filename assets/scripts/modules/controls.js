@@ -2,6 +2,7 @@ import {addItemPage} from './render.js';
 import {countTableTotal} from './services.js';
 import {data} from '../main.js';
 import {domElements} from './domElements.js';
+import {createImg} from './createElements.js';
 
 // Работа с модалкой
 
@@ -109,6 +110,32 @@ export const deleteRow = (data, tBody) => {
             console.log('БД после удаления поля:', data);
 
             countTableTotal(data);
+        }
+    });
+};
+
+// Показать картинку в новом окне
+
+const openNewWindow = (src, width, height) => {
+    const top = screen.height / 2 - height / 2;
+    const left = screen.width / 2 - width / 2;
+
+    const newWindow = window.open(
+            src, '', `width=600,height=600,top=${top},left=${left}`);
+
+    const img = createImg(src);
+
+    newWindow.document.body.append(img);
+};
+
+export const showImg = (tBody) => {
+    tBody.addEventListener('click', (e) => {
+        const target = e.target;
+        const imgShowBtn = target.closest('.products__image-btn');
+        const tableRow = target.closest('.table__row');
+
+        if (imgShowBtn) {
+            openNewWindow(tableRow.dataset.pic, 600, 600);
         }
     });
 };

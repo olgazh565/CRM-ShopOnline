@@ -4,6 +4,7 @@ export const createRow = (obj) => {
     const row = document.createElement('tr');
     const totalCount = obj.price * obj.count * (1 - obj.discont / 100);
     row.className = 'table__row';
+    row.dataset.pic = './assets/imgs/test.jpg';
     row.innerHTML = `
         <td class="products__id">${obj.id}</td>
         <td class="products__name">${obj.title}</td>
@@ -27,4 +28,13 @@ export const createRow = (obj) => {
         `;
 
     return row;
+};
+
+// создание картинки по data-pic
+export const createImg = src => {
+    const img = document.createElement('img');
+    img.alt = 'фото товара';
+    img.src = src;
+
+    return img;
 };

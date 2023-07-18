@@ -7,6 +7,7 @@ import {
     controlCheckbox,
     formControl,
     deleteRow,
+    showImg,
 } from './modules/controls.js';
 
 export const data = [
@@ -79,6 +80,7 @@ const init = (data) => {
     controlCheckbox();
     blockCheckbox();
     countModalTotal(form);
+    showImg(tBody);
 };
 
 init(data);
