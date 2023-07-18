@@ -77,9 +77,7 @@ export const formControl = (form, tBody, closeModal) => {
         if (!formData.has('discont') || formData.get('discont') > 100) {
             formData.set('discont', 0);
         }
-        if (!formData.has('id')) {
-            formData.set('id', Math.round(Math.random() * 1e9));
-        }
+        formData.set('id', Math.round(Math.random() * 1e9));
 
         const newItem = Object.fromEntries(formData);
 
@@ -106,7 +104,7 @@ export const deleteRow = (data, tBody) => {
         if (deleteBtn) {
             tableRow.remove();
 
-            const index = data.findIndex(item => item.id === +id);
+            const index = data.findIndex(item => +item.id === +id);
             data.splice(index, 1);
 
             console.log('БД после удаления поля:', data);
