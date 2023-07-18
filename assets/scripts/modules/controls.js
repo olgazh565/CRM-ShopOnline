@@ -104,10 +104,11 @@ export const deleteRow = (data, tBody) => {
 
         if (deleteBtn) {
             tableRow.remove();
+            data = data.filter(item => +item.id !== +id);
+
+            console.log('БД после удаления поля:', data);
+
+            countTableTotal(data);
         }
-
-        data = data.filter(item => +item.id !== +id);
-
-        console.log('БД после удаления поля:', data);
     });
 };
