@@ -8,7 +8,7 @@ export const countTableTotal = (array) => {
     const totalCount = array.reduce((acc, item) =>
         acc + +item.price * +item.count * (1 - +item.discont / 100), 0);
 
-    totalCountPage.textContent = totalCount;
+    totalCountPage.textContent = totalCount.toFixed(2);
 };
 
 //  Подсчет общей стоимости в модалке
