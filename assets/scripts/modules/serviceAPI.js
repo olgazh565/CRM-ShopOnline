@@ -38,10 +38,9 @@ export const sendNewItem = async (
             body: JSON.stringify(item),
         });
 
-        console.log('result: ', response);
-        console.log('result.ok: ', response.ok);
         if (response.ok) {
             const itemData = await response.json();
+            console.log('itemData: ', itemData);
 
             addItemPage(itemData);
             addItemData(data, itemData);

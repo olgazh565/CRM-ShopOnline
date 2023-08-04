@@ -133,6 +133,7 @@ export const formControl = (data, form, closeModal) => {
         );
 
         form.reset();
+        blockCheckbox();
 
         if (success) countTableTotal(data);
     });
