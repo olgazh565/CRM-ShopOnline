@@ -6,7 +6,7 @@ export const countTableTotal = (array) => {
     const {totalCountPage} = domElements();
 
     const totalCount = array.reduce((acc, item) =>
-        acc + +item.price * +item.count * (1 - +item.discont / 100), 0);
+        acc + +item.price * +item.count * (1 - +item.discount / 100), 0);
 
     totalCountPage.textContent = totalCount.toFixed(2);
 };
@@ -30,3 +30,5 @@ export const countModalTotal = (form) => {
         totalCount.textContent = calc > 0 ? calc : 0;
     });
 };
+
+

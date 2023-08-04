@@ -1,8 +1,10 @@
-// Создание строк с товарами, верстка
+import {domElements} from './domElements.js';
+
+// Создание строк таблицы
 
 export const createRow = (obj) => {
     const row = document.createElement('tr');
-    const totalCount = obj.price * obj.count * (1 - obj.discont / 100);
+    const totalCount = obj.price * obj.count * (1 - obj.discount / 100);
     row.className = 'table__row';
     row.dataset.pic = './assets/imgs/test.jpg';
     row.innerHTML = `
@@ -31,10 +33,76 @@ export const createRow = (obj) => {
 };
 
 // создание картинки по data-pic
+
 export const createImg = src => {
     const img = document.createElement('img');
     img.alt = 'фото товара';
     img.src = src;
 
     return img;
+};
+
+// сообщение об ошибке
+
+export const createErrorPopup = (error, message) => {
+    const {modal} = domElements();
+
+    const errorPopup = document.createElement('div');
+    errorPopup.classList.add('modal__error');
+
+    const closeBtn = document.createElement('button');
+    closeBtn.classList.add('error__close-btn');
+    closeBtn.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2L22 22" stroke="#6E6893" stroke-width="3" 
+                stroke-linecap="round" />
+            <path d="M2 22L22 2" stroke="#6E6893" stroke-width="3" 
+                stroke-linecap="round" />
+        </svg>
+    `;
+
+    const errorTextImg = `
+        <svg width="94" height="94" viewBox="0 0 94 94" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2L92 92" stroke="#D80101" stroke-width="3" 
+                stroke-linecap="round"/>
+            <path d="M2 92L92 2" stroke="#D80101" stroke-width="3" 
+                stroke-linecap="round"/>
+        </svg>
+    `;
+
+    const errorText = document.createElement('div');
+    errorText.classList.add('error__text');
+
+    if (error) {
+        errorText.textContent = `Ошибка ${error}`;
+    } else {
+        errorText.innerHTML = errorTextImg;
+    }
+
+    const errorMessage = document.createElement('div');
+    errorMessage.classList.add('error__message');
+
+    errorMessage.textContent = message ? message : 'Что-то пошло не так';
+
+    errorPopup.append(closeBtn, errorText, errorMessage);
+    modal.append(errorPopup);
+
+    return errorPopup;
+};
+
+// сообщение об успешной отправке данных
+
+export const createSuccessMsg = () => {
+    const msg = document.createElement('div');
+    msg.classList.add('msg');
+
+    const msgText = document.createElement('p');
+    msgText.classList.add('msg__text');
+    msgText.textContent = 'Данные успешно отправлены';
+
+    msg.append(msgText);
+    document.body.append(msg);
+
+    return msg;
 };

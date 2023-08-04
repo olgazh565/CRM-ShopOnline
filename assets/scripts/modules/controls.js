@@ -1,8 +1,52 @@
 import {addItemPage} from './render.js';
 import {countTableTotal} from './services.js';
-import {data} from '../main.js';
 import {domElements} from './domElements.js';
-import {createImg} from './createElements.js';
+import {deleteGoods, sendNewItem} from './serviceAPI.js';
+import {
+    createErrorPopup,
+    createImg,
+    createSuccessMsg,
+} from './createElements.js';
+
+// Показать сообщение об успешной отправке
+
+export const controlSuccessMsg = () => {
+    const msg = createSuccessMsg();
+    msg.classList.add('show');
+
+    setTimeout(() => {
+        msg.classList.remove('show');
+        msg.remove();
+    }, 3000);
+};
+
+// Управление сообщением от ошибке
+
+export const controlErrorMessage = (error, message) => {
+    const {formFieldset, formSubmitBtn, modalOverlay} = domElements();
+    const errorPopup = createErrorPopup(error, message);
+
+    const showErrorMessage = () => {
+        modalOverlay.classList.add('is-error');
+        formFieldset.disabled = true;
+        formSubmitBtn.disabled = true;
+    };
+
+    showErrorMessage();
+
+    const closeErrorPopup = () => {
+        modalOverlay.classList.remove('is-error');
+        formFieldset.disabled = false;
+        formSubmitBtn.disabled = false;
+    };
+
+    errorPopup.addEventListener('click', ({target}) => {
+        if (target.closest('.error__close-btn')) {
+            closeErrorPopup();
+            errorPopup.remove();
+        }
+    });
+};
 
 // Работа с модалкой
 
@@ -11,18 +55,23 @@ export const controlModal = () => {
 
     const openModal = () => {
         modalOverlay.classList.add('modal-visible');
+        document.body.style.overflow = 'hidden';
     };
 
     const closeModal = () => {
         modalOverlay.classList.remove('modal-visible');
+        document.body.style.overflow = '';
     };
 
     modalOpenBtn.addEventListener('click', () => {
         openModal();
     });
 
-    modalOverlay.addEventListener('click', (e) => {
-        const target = e.target;
+    modalOverlay.addEventListener('click', ({target}) => {
+        if (modalOverlay.classList.contains('is-error')) {
+            return;
+        }
+
         if (target === modalOverlay ||
             target.closest('.modal__close-btn')) {
             closeModal();
@@ -59,42 +108,40 @@ export const controlCheckbox = () => {
 
 // Добавление товара в БД
 
-const addItemData = item => {
+export const addItemData = (data, item) => {
     data.push(item);
-    console.log(data);
 
     return data;
 };
 
-// Добавление товара в модалке + добавление товара в БД,
-// пересчет стоимости всей таблицы
+// Добавление товара в модалке
 
-export const formControl = (form, tBody, closeModal) => {
-    form.addEventListener('submit', e => {
+export const formControl = (data, form, closeModal) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-
-        if (!formData.has('discont') || formData.get('discont') > 100) {
-            formData.set('discont', 0);
-        }
-        formData.set('id', Math.round(Math.random() * 1e9));
-
         const newItem = Object.fromEntries(formData);
 
-        const newData = addItemData(newItem);
-        console.log('newData: ', newData);
-        addItemPage(newItem, tBody);
-        countTableTotal(newData);
+        const success = await sendNewItem(
+                data,
+                newItem,
+                addItemPage,
+                addItemData,
+                closeModal,
+                controlSuccessMsg,
+                controlErrorMessage,
+        );
+
         form.reset();
-        closeModal();
-        blockCheckbox();
+
+        if (success) countTableTotal(data);
     });
 };
 
 // Удаление строки из таблицы и товара из БД
 
 export const deleteRow = (data, tBody) => {
-    tBody.addEventListener('click', e => {
+    tBody.addEventListener('click', async (e) => {
         const target = e.target;
         const deleteBtn = target.closest('.products__delete-btn');
         const tableRow = target.closest('.table__row');
@@ -102,13 +149,13 @@ export const deleteRow = (data, tBody) => {
         console.log('id: ', id);
 
         if (deleteBtn) {
+            const success = await deleteGoods(id);
+
+            if (!success) return;
+
             tableRow.remove();
-
-            const index = data.findIndex(item => +item.id === +id);
+            const index = data.findIndex(item => item.id === id);
             data.splice(index, 1);
-
-            console.log('БД после удаления поля:', data);
-
             countTableTotal(data);
         }
     });

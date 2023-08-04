@@ -13,6 +13,8 @@ export const renderGoods = (data) => {
 
 // Добавление товара в таблицу из формы
 
-export const addItemPage = (item, tBody) => {
+export const addItemPage = (item) => {
+    const {tBody} = domElements();
+
     tBody.append(createRow(item));
 };
