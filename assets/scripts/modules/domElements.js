@@ -16,6 +16,7 @@ export const domElements = () => {
     const errorPopup = document.querySelector('.modal__error');
     const errorText = document.querySelector('.error__text');
     const errorMessage = document.querySelector('.error__message');
+    const editBtn = document.querySelector('.products__edit-btn');
 
     return {
         form,
@@ -35,5 +36,6 @@ export const domElements = () => {
         errorPopup,
         errorText,
         errorMessage,
+        editBtn,
     };
 };

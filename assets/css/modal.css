@@ -248,6 +248,8 @@
     font-weight: 700;
     font-size: 18px;
     color: #6D5BD0;
+    display: flex;
+    gap: 5px;
 }
 
 .modal__error {

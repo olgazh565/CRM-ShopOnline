@@ -23,7 +23,6 @@ export const sendNewItem = async (
         item,
         addItemPage,
         addItemData,
-        closeModal,
         controlSuccessMsg,
         controlErrorMessage,
 ) => {
@@ -44,7 +43,6 @@ export const sendNewItem = async (
 
             addItemPage(itemData);
             addItemData(data, itemData);
-            closeModal();
             controlSuccessMsg();
         } else {
             throw new Error(response.status);
@@ -73,3 +71,29 @@ export const deleteGoods = async (id) => {
         console.log(err);
     }
 };
+
+// получить товар по id
+
+export const getItem = async (id, createModal, data) => {
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'GET',
+            headers,
+        });
+
+        if (response.ok) {
+            const itemData = await response.json();
+
+            createModal(data, itemData);
+
+            return itemData;
+        }
+    } catch (err) {
+        console.log(err);
+    }
+};
+

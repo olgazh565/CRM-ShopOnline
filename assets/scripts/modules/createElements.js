@@ -1,5 +1,7 @@
+// import {loadStyle} from './service.js';
 import {domElements} from './domElements.js';
-import {createElement} from './services.js';
+import {countModalTotal, createElement} from './services.js';
+import {formControl} from './controls.js';
 
 // Создание строк таблицы
 
@@ -109,11 +111,42 @@ export const createSuccessMsg = () => {
     return msg;
 };
 
+// создание и асинхронное подключение стилей
+
+const styles = new Map();
+
+export const loadStyle = url => {
+    if (styles.has(url)) {
+        return styles.get(url);
+    }
+
+    const stylePromise = new Promise((resolve) => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+
+        link.addEventListener('load', () => {
+            resolve();
+        });
+
+        document.head.append(link);
+    });
+
+    styles.set(url, stylePromise);
+
+    return stylePromise;
+};
+
 // Модальное окно
 
-export const createModal = (item = {}) => {
+export const createModal = async (data, item = {}) => {
+    await loadStyle('./assets/css/modal.css');
+
+    const isItem = Object.keys(item).length !== 0;
+    console.log('isItem: ', isItem);
+
     const modalOverlay = createElement('div', {
-        className: 'overlay',
+        className: 'overlay modal-visible',
     });
 
     const modal = createElement('div', {
@@ -130,7 +163,7 @@ export const createModal = (item = {}) => {
 
     const modalTitle = createElement('p', {
         className: 'modal__title',
-        textContent: item ? 'Изменить товар' : 'Добавить товар',
+        textContent: isItem ? 'Изменить товар' : 'Добавить товар',
     });
 
     const modalId = createElement('p', {
@@ -139,11 +172,12 @@ export const createModal = (item = {}) => {
 
     const modalIdText = createElement('span', {
         className: 'modal__id-text',
+        textContent: isItem ? 'id:' : '',
     });
 
     const modalIdNum = createElement('span', {
         className: 'modal__id-num',
-        textContent: item ? item.id : '',
+        textContent: isItem ? item.id : '',
     });
 
     const modalCloseBtn = createElement('button', {
@@ -189,7 +223,7 @@ export const createModal = (item = {}) => {
         name: 'title',
         id: 'title',
         required: true,
-        value: item ? item.title : '',
+        value: isItem ? item.title : '',
     });
 
     nameItem.append(nameLabel, nameInput);
@@ -210,7 +244,7 @@ export const createModal = (item = {}) => {
         name: 'category',
         id: 'category',
         required: true,
-        value: item ? item.category : '',
+        value: isItem ? item.category : '',
     });
 
     categoryItem.append(categoryLabel, categoryInput);
@@ -231,7 +265,7 @@ export const createModal = (item = {}) => {
         name: 'units',
         id: 'units',
         required: true,
-        value: item ? item.units : '',
+        value: isItem ? item.units : '',
     });
 
     unitsItem.append(unitsLabel, unitsInput);
@@ -254,6 +288,7 @@ export const createModal = (item = {}) => {
         className: 'form__checkbox',
         type: 'checkbox',
         ariaLabel: 'Добавить скидку',
+        checked: isItem,
     });
 
     const discountInput = createElement('input', {
@@ -262,7 +297,7 @@ export const createModal = (item = {}) => {
         name: 'discount',
         id: 'discount',
         required: true,
-        value: item ? item.discount : '',
+        value: isItem ? item.discount : '',
     });
 
     discountWrapper.append(discountCheckbox, discountInput);
@@ -284,7 +319,7 @@ export const createModal = (item = {}) => {
         id: 'description',
         rows: '5',
         required: true,
-        value: item ? item.description : '',
+        value: isItem ? item.description : '',
     });
 
     descriptionItem.append(descriptionLabel, descriptionInput);
@@ -305,7 +340,7 @@ export const createModal = (item = {}) => {
         name: 'count',
         id: 'count',
         required: true,
-        value: item ? item.count : '',
+        value: isItem ? item.count : '',
     });
 
     countItem.append(countLabel, countInput);
@@ -326,7 +361,7 @@ export const createModal = (item = {}) => {
         name: 'price',
         id: 'price',
         required: true,
-        value: item ? item.price : '',
+        value: isItem ? item.price : '',
     });
 
     priceItem.append(priceLabel, priceInput);
@@ -349,7 +384,6 @@ export const createModal = (item = {}) => {
         id: 'image',
         accept: 'image/*',
         required: false,
-        // value: item ? item.image : '',
     });
 
     imageItem.append(imageLabel, imageInput);
@@ -388,9 +422,9 @@ export const createModal = (item = {}) => {
 
     const formTotalCount = createElement('span', {
         className: 'total__count',
-        textContent: item ?
-        `${item.price} * ${item.count} * (1 - ${item.discount} / 100)
-        ).toFixed(2);` : '',
+        textContent: isItem ?
+            (item.price * item.count * (1 - item.discount / 100))
+                    .toFixed(2) : '0',
     });
 
     formTotalData.append(formTotalCurrency, formTotalCount);
@@ -403,12 +437,29 @@ export const createModal = (item = {}) => {
     });
 
     formFooter.append(formTotal, formButton);
-
     modalForm.append(modalFieldset, formFooter);
     modalContainer.append(modalHeader, modalCloseBtn, modalForm);
     modal.append(modalContainer);
     modalOverlay.append(modal);
     document.body.append(modalOverlay);
 
-    return modalOverlay;
+    modalOverlay.addEventListener('click', ({target}) => {
+        if (modalOverlay.classList.contains('is-error')) {
+            return;
+        }
+        if (target === modalOverlay ||
+            target.closest('.modal__close-btn')) {
+            modalOverlay.remove();
+            document.body.style.overflow = '';
+        }
+    });
+
+    discountCheckbox.addEventListener('change', () => {
+        discountInput.value = '';
+        discountInput.disabled = !discountCheckbox.checked;
+    });
+
+    formControl(data, modalForm, modalOverlay);
+    countModalTotal(modalForm);
+    document.body.style.overflow = 'hidden';
 };

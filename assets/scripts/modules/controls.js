@@ -1,10 +1,11 @@
 import {addItemPage} from './render.js';
 import {countTableTotal} from './services.js';
 import {domElements} from './domElements.js';
-import {deleteGoods, sendNewItem} from './serviceAPI.js';
+import {deleteGoods, getItem, sendNewItem} from './serviceAPI.js';
 import {
     createErrorPopup,
     createImg,
+    createModal,
     createSuccessMsg,
 } from './createElements.js';
 
@@ -48,41 +49,6 @@ export const controlErrorMessage = (error, message) => {
     });
 };
 
-// Работа с модалкой
-
-export const controlModal = () => {
-    const {modalOpenBtn, modalOverlay} = domElements();
-
-    const openModal = () => {
-        modalOverlay.classList.add('modal-visible');
-        document.body.style.overflow = 'hidden';
-    };
-
-    const closeModal = () => {
-        modalOverlay.classList.remove('modal-visible');
-        document.body.style.overflow = '';
-    };
-
-    modalOpenBtn.addEventListener('click', () => {
-        openModal();
-    });
-
-    modalOverlay.addEventListener('click', ({target}) => {
-        if (modalOverlay.classList.contains('is-error')) {
-            return;
-        }
-
-        if (target === modalOverlay ||
-            target.closest('.modal__close-btn')) {
-            closeModal();
-        }
-    });
-
-    return {
-        closeModal,
-    };
-};
-
 // Управление чекбоксом
 
 export const blockCheckbox = () => {
@@ -116,7 +82,7 @@ export const addItemData = (data, item) => {
 
 // Добавление товара в модалке
 
-export const formControl = (data, form, closeModal) => {
+export const formControl = (data, form, modalOverlay) => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -127,15 +93,29 @@ export const formControl = (data, form, closeModal) => {
                 newItem,
                 addItemPage,
                 addItemData,
-                closeModal,
                 controlSuccessMsg,
                 controlErrorMessage,
         );
-
         form.reset();
         blockCheckbox();
 
-        if (success) countTableTotal(data);
+        if (success) {
+            countTableTotal(data);
+            modalOverlay.remove();
+            document.body.style.overflow = '';
+        }
+    });
+};
+
+// открыть модалку
+
+export const openModal = (data) => {
+    const {modalOpenBtn} = domElements();
+
+    modalOpenBtn.addEventListener('click', async () => {
+        await createModal(data);
+        controlCheckbox();
+        document.body.style.overflow = 'hidden';
     });
 };
 
@@ -146,7 +126,7 @@ export const deleteRow = (data, tBody) => {
         const target = e.target;
         const deleteBtn = target.closest('.products__delete-btn');
         const tableRow = target.closest('.table__row');
-        const id = tableRow.cells[0].textContent;
+        const id = tableRow.dataset.id;
         console.log('id: ', id);
 
         if (deleteBtn) {
@@ -187,3 +167,22 @@ export const showImg = (tBody) => {
         }
     });
 };
+
+// редактирование товара
+
+export const editItem = async (tBody, data) => {
+    tBody.addEventListener('click', async (e) => {
+        const target = e.target;
+        const editBtn = target.closest('.products__edit-btn');
+        const tableRow = target.closest('.table__row');
+        const id = tableRow.dataset.id;
+        console.log('id: ', id);
+
+        if (editBtn) {
+            const item = await getItem(id, createModal, data);
+            console.log('item: ', item);
+        }
+    });
+};
+
+
