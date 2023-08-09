@@ -177,8 +177,10 @@ export const createModal = async (data, item = {}) => {
 
     const modalIdNum = createElement('span', {
         className: 'modal__id-num',
-        textContent: isItem ? item.id : '',
+        textContent: item.id ?? '',
     });
+
+    console.log('modalIdNum: ', modalIdNum.textContent);
 
     const modalCloseBtn = createElement('button', {
         className: 'modal__close-btn',
@@ -213,7 +215,7 @@ export const createModal = async (data, item = {}) => {
 
     const nameLabel = createElement('label', {
         className: 'form__label',
-        for: 'title',
+        htmlFor: 'title',
         textContent: 'Наименование',
     });
 
@@ -223,7 +225,7 @@ export const createModal = async (data, item = {}) => {
         name: 'title',
         id: 'title',
         required: true,
-        value: isItem ? item.title : '',
+        value: item.title ?? '',
     });
 
     nameItem.append(nameLabel, nameInput);
@@ -234,7 +236,7 @@ export const createModal = async (data, item = {}) => {
 
     const categoryLabel = createElement('label', {
         className: 'form__label',
-        for: 'category',
+        htmlFor: 'category',
         textContent: 'Категория',
     });
 
@@ -244,7 +246,7 @@ export const createModal = async (data, item = {}) => {
         name: 'category',
         id: 'category',
         required: true,
-        value: isItem ? item.category : '',
+        value: item.category ?? '',
     });
 
     categoryItem.append(categoryLabel, categoryInput);
@@ -255,7 +257,7 @@ export const createModal = async (data, item = {}) => {
 
     const unitsLabel = createElement('label', {
         className: 'form__label',
-        for: 'units',
+        htmlFor: 'units',
         textContent: 'Единицы измерения',
     });
 
@@ -265,7 +267,7 @@ export const createModal = async (data, item = {}) => {
         name: 'units',
         id: 'units',
         required: true,
-        value: isItem ? item.units : '',
+        value: item.units ?? '',
     });
 
     unitsItem.append(unitsLabel, unitsInput);
@@ -276,7 +278,7 @@ export const createModal = async (data, item = {}) => {
 
     const discountLabel = createElement('label', {
         className: 'form__label form__label_checkbox',
-        for: 'discount',
+        htmlFor: 'discount',
         textContent: 'Дисконт',
     });
 
@@ -297,7 +299,7 @@ export const createModal = async (data, item = {}) => {
         name: 'discount',
         id: 'discount',
         required: true,
-        value: isItem ? item.discount : '',
+        value: item.discount ?? '',
     });
 
     discountWrapper.append(discountCheckbox, discountInput);
@@ -309,7 +311,7 @@ export const createModal = async (data, item = {}) => {
 
     const descriptionLabel = createElement('label', {
         className: 'form__label',
-        for: 'description',
+        htmlFor: 'description',
         textContent: 'Описание',
     });
 
@@ -319,7 +321,7 @@ export const createModal = async (data, item = {}) => {
         id: 'description',
         rows: '5',
         required: true,
-        value: isItem ? item.description : '',
+        value: item.description ?? '',
     });
 
     descriptionItem.append(descriptionLabel, descriptionInput);
@@ -330,7 +332,7 @@ export const createModal = async (data, item = {}) => {
 
     const countLabel = createElement('label', {
         className: 'form__label',
-        for: 'count',
+        htmlFor: 'count',
         textContent: 'Количество',
     });
 
@@ -340,7 +342,7 @@ export const createModal = async (data, item = {}) => {
         name: 'count',
         id: 'count',
         required: true,
-        value: isItem ? item.count : '',
+        value: item.count ?? '',
     });
 
     countItem.append(countLabel, countInput);
@@ -351,7 +353,7 @@ export const createModal = async (data, item = {}) => {
 
     const priceLabel = createElement('label', {
         className: 'form__label',
-        for: 'price',
+        htmlFor: 'price',
         textContent: 'Цена',
     });
 
@@ -361,19 +363,19 @@ export const createModal = async (data, item = {}) => {
         name: 'price',
         id: 'price',
         required: true,
-        value: isItem ? item.price : '',
+        value: item.price ?? '',
     });
 
     priceItem.append(priceLabel, priceInput);
 
     const imageItem = createElement('div', {
         className: 'form__item form__item_add-image',
+        tabIndex: '0',
     });
 
     const imageLabel = createElement('label', {
         className: 'form__label-add-image',
-        for: 'image',
-        tabindex: '0',
+        htmlFor: 'image',
         textContent: 'добавить изображение',
     });
 
@@ -431,9 +433,11 @@ export const createModal = async (data, item = {}) => {
     formTotal.append(formTotalText, formTotalData);
 
     const formButton = createElement('button', {
-        className: 'form__add-button add-button',
+        className: isItem ? 'form__add-button add-button is-blocked' :
+            'form__add-button add-button',
         type: 'submit',
         textContent: 'Добавить товар',
+        disabled: isItem,
     });
 
     formFooter.append(formTotal, formButton);
@@ -459,7 +463,14 @@ export const createModal = async (data, item = {}) => {
         discountInput.disabled = !discountCheckbox.checked;
     });
 
-    formControl(data, modalForm, modalOverlay);
+    modalForm.addEventListener('change', ({target}) => {
+        if (target.closest('INPUT') || target.closest('TEXTAREA')) {
+            formButton.disabled = false;
+            formButton.classList.remove('is-blocked');
+        }
+    });
+
+    formControl(data, modalForm, modalOverlay, modalIdNum.textContent);
     countModalTotal(modalForm);
     document.body.style.overflow = 'hidden';
 };

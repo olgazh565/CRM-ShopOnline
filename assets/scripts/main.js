@@ -12,11 +12,11 @@ import {
 const init = async () => {
     const data = await getGoods(renderGoods, countTableTotal);
     console.log('data: ', data);
-
     const {tBody} = domElements();
+
     openModal(data);
     deleteRow(data, tBody);
-    editItem(tBody, data);
+    editItem(data, tBody);
     showImg(tBody);
 };
 

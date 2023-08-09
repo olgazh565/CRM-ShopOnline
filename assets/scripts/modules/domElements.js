@@ -17,6 +17,7 @@ export const domElements = () => {
     const errorText = document.querySelector('.error__text');
     const errorMessage = document.querySelector('.error__message');
     const editBtn = document.querySelector('.products__edit-btn');
+    const tableRows = document.querySelectorAll('.table__row');
 
     return {
         form,
@@ -37,5 +38,6 @@ export const domElements = () => {
         errorText,
         errorMessage,
         editBtn,
+        tableRows,
     };
 };
