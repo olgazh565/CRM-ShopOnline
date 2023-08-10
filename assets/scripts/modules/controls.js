@@ -1,5 +1,5 @@
 import {addItemPage} from './render.js';
-import {countTableTotal} from './services.js';
+import {countTableTotal, toBase64} from './services.js';
 import {domElements} from './domElements.js';
 import {deleteGoods, getItem, sendEditItem, sendNewItem} from './serviceAPI.js';
 import {
@@ -109,6 +109,7 @@ export const formControl = (data, form, modalOverlay, id) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const itemData = Object.fromEntries(formData);
+        itemData.image = await toBase64(form.image.files[0]);
         let success;
 
         if (id) {
@@ -150,7 +151,6 @@ export const editItem = async (data, tBody) => {
         const editBtn = target.closest('.products__edit-btn');
         const tableRow = target.closest('.table__row');
         const id = tableRow.dataset.id;
-        console.log('id: ', id);
 
         if (editBtn) {
             const item = await getItem(id, data, createModal);
@@ -166,7 +166,6 @@ export const deleteRow = (data, tBody) => {
         const deleteBtn = target.closest('.products__delete-btn');
         const tableRow = target.closest('.table__row');
         const id = tableRow.dataset.id;
-        console.log('id: ', id);
 
         if (deleteBtn) {
             const success = await deleteGoods(id);

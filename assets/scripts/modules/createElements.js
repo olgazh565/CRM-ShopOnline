@@ -1,16 +1,52 @@
-// import {loadStyle} from './service.js';
 import {domElements} from './domElements.js';
 import {countModalTotal, createElement} from './services.js';
 import {formControl} from './controls.js';
+import {isImage, noImage} from './const.js';
 
 // Создание строк таблицы
 
 export const createRow = (obj) => {
-    const row = document.createElement('tr');
     const totalCount = obj.price * obj.count * (1 - obj.discount / 100);
+
+    // const row = createElement('tr', {
+    //     className: 'table__row',
+    //     dataset.id: obj.id,
+    //     dataset.id: obj.image === 'image/notimage.jpg' ?
+    //         './assets/imgs/no-foto.jpg' :
+    //         `https://leaf-serious-chef.glitch.me/${obj.image}`,
+    //     innerHTML: `
+    //         <td class="products__id">${obj.id}</td>
+    //         <td class="products__name">${obj.title}</td>
+    //         <td class="products__category">${obj.category}</td>
+    //         <td class="products__units">${obj.units}</td>
+    //         <td class="products__count">${obj.count}</td>
+    //         <td class="products__price">${obj.price}</td>
+    //         <td class="products__total">${totalCount > 0 ? totalCount : 0}
+    //         </td>
+    //         <td class="products__image">
+    //             <button class="products__btn products__image-btn products"
+    //                 type="button">
+    //                     ${obj.image === 'image/notimage.jpg' ?
+    //                         noImage : isImage}
+    //                 </button>
+    //         </td>
+    //         <td class="products__edit">
+    //             <button class="products__btn products__edit-btn"
+    //                 type="button"></button>
+    //         </td>
+    //         <td class="products__delete">
+    //             <button class="products__btn products__delete-btn"
+    //                 type="button"></button>
+    //         </td>
+    //     `,
+    // });
+
+    const row = document.createElement('tr');
     row.className = 'table__row';
     row.dataset.id = obj.id;
-    row.dataset.pic = './assets/imgs/test.jpg';
+    row.dataset.pic = obj.image === 'image/notimage.jpg' ?
+        './assets/imgs/no-foto.jpg' :
+        `https://leaf-serious-chef.glitch.me/${obj.image}`;
     row.innerHTML = `
         <td class="products__id">${obj.id}</td>
         <td class="products__name">${obj.title}</td>
@@ -21,7 +57,9 @@ export const createRow = (obj) => {
         <td class="products__total">${totalCount > 0 ? totalCount : 0}</td>
         <td class="products__image">
             <button class="products__btn products__image-btn products"
-                type="button"></button>
+                type="button">
+                    ${obj.image === 'image/notimage.jpg' ? noImage : isImage}
+                </button>
         </td>
         <td class="products__edit">
             <button class="products__btn products__edit-btn"
@@ -31,7 +69,7 @@ export const createRow = (obj) => {
             <button class="products__btn products__delete-btn"
                 type="button"></button>
         </td>    
-        `;
+    `;
 
     return row;
 };
@@ -39,9 +77,10 @@ export const createRow = (obj) => {
 // создание картинки по data-pic
 
 export const createImg = src => {
-    const img = document.createElement('img');
-    img.alt = 'фото товара';
-    img.src = src;
+    const img = createElement('img', {
+        alt: 'фото товара',
+        src,
+    });
 
     return img;
 };
@@ -143,7 +182,6 @@ export const createModal = async (data, item = {}) => {
     await loadStyle('./assets/css/modal.css');
 
     const isItem = Object.keys(item).length !== 0;
-    console.log('isItem: ', isItem);
 
     const modalOverlay = createElement('div', {
         className: 'overlay modal-visible',
@@ -179,8 +217,6 @@ export const createModal = async (data, item = {}) => {
         className: 'modal__id-num',
         textContent: item.id ?? '',
     });
-
-    console.log('modalIdNum: ', modalIdNum.textContent);
 
     const modalCloseBtn = createElement('button', {
         className: 'modal__close-btn',
@@ -368,8 +404,17 @@ export const createModal = async (data, item = {}) => {
 
     priceItem.append(priceLabel, priceInput);
 
-    const imageItem = createElement('div', {
+    const imageItemWrapper = createElement('div', {
         className: 'form__item form__item_add-image',
+    });
+
+    const imageWarning = createElement('p', {
+        className: 'form__item_add-image-warning',
+        textContent: 'Изображение не должно превышать размер 1Мб',
+    });
+
+    const imageItem = createElement('div', {
+        className: 'form__item_add-image-group',
         tabIndex: '0',
     });
 
@@ -389,6 +434,17 @@ export const createModal = async (data, item = {}) => {
     });
 
     imageItem.append(imageLabel, imageInput);
+    imageItemWrapper.append(imageWarning, imageItem);
+
+    const imagePreview = createElement('div', {
+        className: 'form__item form__item_img-preview',
+    });
+
+    const image = createElement('img', {
+        className: 'form__item form__item_image',
+    });
+
+    imagePreview.append(image);
     modalFieldset.append(
             nameItem,
             categoryItem,
@@ -397,7 +453,8 @@ export const createModal = async (data, item = {}) => {
             descriptionItem,
             countItem,
             priceItem,
-            imageItem,
+            imageItemWrapper,
+            imagePreview,
     );
 
     const formFooter = createElement('div', {
@@ -463,10 +520,28 @@ export const createModal = async (data, item = {}) => {
         discountInput.disabled = !discountCheckbox.checked;
     });
 
-    modalForm.addEventListener('change', ({target}) => {
+    modalForm.addEventListener('input', ({target}) => {
         if (target.closest('INPUT') || target.closest('TEXTAREA')) {
             formButton.disabled = false;
             formButton.classList.remove('is-blocked');
+        }
+    });
+
+    imageInput.addEventListener('change', () => {
+        if (imageInput.files.length > 0) {
+            const src = URL.createObjectURL(imageInput.files[0]);
+            console.log('src: ', src);
+            image.src = src;
+            imagePreview.style.display = 'flex';
+            if (imageInput.files[0].size > 1000000) {
+                imageWarning.style.display = 'block';
+                formButton.disabled = true;
+                formButton.classList.add('is-blocked');
+            } else {
+                imageWarning.style.display = 'none';
+                formButton.disabled = false;
+                formButton.classList.remove('is-blocked');
+            }
         }
     });
 
