@@ -547,10 +547,10 @@ export const createModal = async (data, item = {}) => {
         }
     });
 
-    image.addEventListener('click', () => {
-        image.style.filter = 'brightness(50%)';
-        imagePreview.classList.add('img-preview-delete')
-    });
+    // image.addEventListener('click', () => {
+    //     image.style.filter = 'brightness(50%)';
+    //     imagePreview.classList.add('img-preview-delete');
+    // });
 
     formControl(data, modalForm, modalOverlay, modalIdNum.textContent);
     countModalTotal(modalForm);
