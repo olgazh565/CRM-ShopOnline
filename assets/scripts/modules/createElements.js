@@ -442,6 +442,7 @@ export const createModal = async (data, item = {}) => {
 
     const image = createElement('img', {
         className: 'form__item form__item_image',
+        src: item.image ? (item.image !== 'image/notimage.jpg' ? `https://leaf-serious-chef.glitch.me/${item.image}` : '') : '',
     });
 
     imagePreview.append(image);
@@ -532,6 +533,7 @@ export const createModal = async (data, item = {}) => {
             const src = URL.createObjectURL(imageInput.files[0]);
             console.log('src: ', src);
             image.src = src;
+            image.style.cursor = 'pointer';
             imagePreview.style.display = 'flex';
             if (imageInput.files[0].size > 1000000) {
                 imageWarning.style.display = 'block';
@@ -543,6 +545,11 @@ export const createModal = async (data, item = {}) => {
                 formButton.classList.remove('is-blocked');
             }
         }
+    });
+
+    image.addEventListener('click', () => {
+        image.style.filter = 'brightness(50%)';
+        imagePreview.classList.add('img-preview-delete')
     });
 
     formControl(data, modalForm, modalOverlay, modalIdNum.textContent);

@@ -109,7 +109,9 @@ export const formControl = (data, form, modalOverlay, id) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const itemData = Object.fromEntries(formData);
-        itemData.image = await toBase64(form.image.files[0]);
+        if (form.image.files.length > 0) {
+            itemData.image = await toBase64(form.image.files[0]);
+        }
         let success;
 
         if (id) {
