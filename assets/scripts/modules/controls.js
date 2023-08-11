@@ -1,10 +1,12 @@
 import {addItemPage} from './render.js';
 import {countTableTotal} from './services.js';
 import {domElements} from './domElements.js';
-import {deleteGoods, sendNewItem} from './serviceAPI.js';
+import {deleteGoods, getItem, sendEditItem, sendNewItem} from './serviceAPI.js';
 import {
     createErrorPopup,
     createImg,
+    createModal,
+    createRow,
     createSuccessMsg,
 } from './createElements.js';
 
@@ -48,41 +50,6 @@ export const controlErrorMessage = (error, message) => {
     });
 };
 
-// Работа с модалкой
-
-export const controlModal = () => {
-    const {modalOpenBtn, modalOverlay} = domElements();
-
-    const openModal = () => {
-        modalOverlay.classList.add('modal-visible');
-        document.body.style.overflow = 'hidden';
-    };
-
-    const closeModal = () => {
-        modalOverlay.classList.remove('modal-visible');
-        document.body.style.overflow = '';
-    };
-
-    modalOpenBtn.addEventListener('click', () => {
-        openModal();
-    });
-
-    modalOverlay.addEventListener('click', ({target}) => {
-        if (modalOverlay.classList.contains('is-error')) {
-            return;
-        }
-
-        if (target === modalOverlay ||
-            target.closest('.modal__close-btn')) {
-            closeModal();
-        }
-    });
-
-    return {
-        closeModal,
-    };
-};
-
 // Управление чекбоксом
 
 export const blockCheckbox = () => {
@@ -114,38 +81,91 @@ export const addItemData = (data, item) => {
     return data;
 };
 
+// Изменить товар в БД
+
+export const editItemData = (data, item, id) => {
+    const index = data.findIndex(item => item.id === id);
+    data.splice(index, 1, item);
+
+    return data;
+};
+
+// Изменить товар в таблице
+
+export const editItemPage = (item) => {
+    const {tableRows} = domElements();
+
+    for (const row of tableRows) {
+        if (row.dataset.id === item.id) {
+            row.replaceWith(createRow(item));
+        }
+    }
+};
+
 // Добавление товара в модалке
 
-export const formControl = (data, form, closeModal) => {
+export const formControl = (data, form, modalOverlay, id) => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        const newItem = Object.fromEntries(formData);
+        const itemData = Object.fromEntries(formData);
+        let success;
 
-        const success = await sendNewItem(
-                data,
-                newItem,
-                addItemPage,
-                addItemData,
-                closeModal,
-                controlSuccessMsg,
-                controlErrorMessage,
-        );
+        if (id) {
+            success = await sendEditItem(
+                    id,
+                    data,
+                    itemData,
+                    editItemPage,
+                    editItemData,
+                    controlSuccessMsg,
+                    controlErrorMessage,
+            );
+        } else {
+            success = await sendNewItem(
+                    data,
+                    itemData,
+                    addItemPage,
+                    addItemData,
+                    controlSuccessMsg,
+                    controlErrorMessage,
+            );
+        }
 
         form.reset();
         blockCheckbox();
-        if (success) countTableTotal(data);
+
+        if (success) {
+            countTableTotal(data);
+            modalOverlay.remove();
+            document.body.style.overflow = '';
+        }
+    });
+};
+
+// редактирование товара
+
+export const editItem = async (data, tBody) => {
+    tBody.addEventListener('click', async ({target}) => {
+        const editBtn = target.closest('.products__edit-btn');
+        const tableRow = target.closest('.table__row');
+        const id = tableRow.dataset.id;
+        console.log('id: ', id);
+
+        if (editBtn) {
+            const item = await getItem(id, data, createModal);
+            console.log('item: ', item);
+        }
     });
 };
 
 // Удаление строки из таблицы и товара из БД
 
 export const deleteRow = (data, tBody) => {
-    tBody.addEventListener('click', async (e) => {
-        const target = e.target;
+    tBody.addEventListener('click', async ({target}) => {
         const deleteBtn = target.closest('.products__delete-btn');
         const tableRow = target.closest('.table__row');
-        const id = tableRow.cells[0].textContent;
+        const id = tableRow.dataset.id;
         console.log('id: ', id);
 
         if (deleteBtn) {
@@ -158,6 +178,18 @@ export const deleteRow = (data, tBody) => {
             data.splice(index, 1);
             countTableTotal(data);
         }
+    });
+};
+
+// открыть модалку
+
+export const openModal = (data) => {
+    const {modalOpenBtn} = domElements();
+
+    modalOpenBtn.addEventListener('click', async () => {
+        await createModal(data);
+        controlCheckbox();
+        document.body.style.overflow = 'hidden';
     });
 };
 
@@ -186,3 +218,4 @@ export const showImg = (tBody) => {
         }
     });
 };
+

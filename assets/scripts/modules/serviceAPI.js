@@ -23,7 +23,6 @@ export const sendNewItem = async (
         item,
         addItemPage,
         addItemData,
-        closeModal,
         controlSuccessMsg,
         controlErrorMessage,
 ) => {
@@ -38,14 +37,50 @@ export const sendNewItem = async (
             body: JSON.stringify(item),
         });
 
-        console.log('result: ', response);
-        console.log('result.ok: ', response.ok);
         if (response.ok) {
             const itemData = await response.json();
+            console.log('itemData: ', itemData);
 
             addItemPage(itemData);
             addItemData(data, itemData);
-            closeModal();
+            controlSuccessMsg();
+        } else {
+            throw new Error(response.status);
+        }
+        return response.ok;
+    } catch (err) {
+        controlErrorMessage(err.message);
+    }
+};
+
+// Изменение товара
+
+export const sendEditItem = async (
+        id,
+        data,
+        item,
+        editItemPage,
+        editItemData,
+        controlSuccessMsg,
+        controlErrorMessage,
+) => {
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/${+id}`, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify(item),
+        });
+
+        if (response.ok) {
+            const itemData = await response.json();
+            console.log('itemData: ', itemData);
+
+            editItemPage(itemData);
+            editItemData(data, itemData, itemData.id);
             controlSuccessMsg();
         } else {
             throw new Error(response.status);
@@ -74,3 +109,29 @@ export const deleteGoods = async (id) => {
         console.log(err);
     }
 };
+
+// получить товар по id
+
+export const getItem = async (id, data, createModal) => {
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'GET',
+            headers,
+        });
+
+        if (response.ok) {
+            const itemData = await response.json();
+
+            createModal(data, itemData);
+
+            return itemData;
+        }
+    } catch (err) {
+        console.log(err);
+    }
+};
+
