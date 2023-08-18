@@ -126,7 +126,7 @@ export const getItem = async (id, data, createModal) => {
         if (response.ok) {
             const itemData = await response.json();
 
-            createModal(data, itemData);
+            await createModal(data, itemData);
 
             return itemData;
         }

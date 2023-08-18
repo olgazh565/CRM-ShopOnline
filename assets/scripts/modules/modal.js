@@ -30,7 +30,7 @@ export const loadStyle = url => {
         link.href = url;
 
         link.addEventListener('load', () => {
-            resolve();
+            resolve(link);
         });
 
         document.head.append(link);
@@ -44,8 +44,8 @@ export const loadStyle = url => {
 // Модальное окно
 
 export const createModal = async (data, item = {}) => {
-    await loadStyle('./assets/css/modal.css');
-
+    const style = await loadStyle('./assets/css/modal.css');
+    console.log('style: ', style);
     const isItem = Object.keys(item).length !== 0;
 
     const modalOverlay = createElement('div', {
@@ -399,8 +399,7 @@ export const createModal = async (data, item = {}) => {
     });
 
     modalForm.addEventListener('input', ({target}) => {
-        if (target.closest('INPUT') || target.closest('TEXTAREA') ||
-            target.closest('.img-preview__wrapper')) {
+        if (target.closest('INPUT') || target.closest('TEXTAREA')) {
             formButton.disabled = false;
             formButton.classList.remove('is-blocked');
         }
@@ -427,6 +426,7 @@ export const createModal = async (data, item = {}) => {
 
     imageWrapper.addEventListener('click', () => {
         imagePreview.classList.remove('is-image');
+        URL.revokeObjectURL(image.src);
 
         if (imageInput.files.length > 0) {
             imageInput.value = null;
@@ -441,12 +441,10 @@ export const createModal = async (data, item = {}) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const itemData = Object.fromEntries(formData);
+        itemData.image = imageInput.files.length > 0 ?
+            await toBase64(imageInput.files[0]) : item.image;
+        console.log('itemData.image: ', itemData.image);
 
-        if (modalForm.image.files.length > 0) {
-            itemData.image = await toBase64(modalForm.image.files[0]);
-        } else if (item.image) {
-            itemData.image = item.image;
-        }
         let success;
 
         if (item.id) {

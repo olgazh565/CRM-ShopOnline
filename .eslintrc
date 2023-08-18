@@ -218,7 +218,10 @@
         "code": 80,
         "tabWidth": 2,
         "ignoreUrls": true,
-        "ignorePattern": "goog.(module|require)"
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignorePattern": "d=\"([\\s\\S]*?)\""
+        // "ignorePattern": "goog.(module|require)"
       }
     ],
     "new-cap": "error",
