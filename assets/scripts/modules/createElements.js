@@ -116,18 +116,13 @@ export const createSuccessMsg = () => {
     return msg;
 };
 
-// сообщение об ошибке при валидации
+// создание ошибки при отправке формы
 
 export const createErrorMsg = input => {
     const errorMsg = document.createElement('span');
     errorMsg.classList.add('input-error');
     input.parentElement.append(errorMsg);
-    errorMsg.textContent = '';
 
-    if (input.validity.valueMissing) {
-        errorMsg.textContent = 'Поле обязательно к заполнению';
-    } else if (input.validity.tooShort) {
-        errorMsg.textContent = `Описание должно быть не менее ${input.minLength} символов, вы ввели ${input.value.length}`;
-    }
     return errorMsg;
 };
+

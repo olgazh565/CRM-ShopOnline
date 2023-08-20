@@ -473,6 +473,9 @@
         order: 1;
     }
 
+    .form__item_img-preview {
+        grid-row: 10 / 11;
+    }
 
     .form__footer {
         padding: 0;
@@ -492,7 +495,7 @@
 
 @media (max-width: 500px) {
     .modal__container {
-        max-width: 792px;
+        max-width: 540px;
         padding: 32px 20px 39px;
     }
 }

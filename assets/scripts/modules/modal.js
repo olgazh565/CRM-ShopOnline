@@ -13,8 +13,9 @@ import {
     controlSuccessMsg,
     editItemData,
     editItemPage,
+    controlErrorMsg,
 } from './controls.js';
-import {createErrorMsg} from './createElements.js';
+import {domElements} from './domElements.js';
 
 // создание и асинхронное подключение стилей в модалке
 
@@ -306,7 +307,7 @@ export const createModal = async (data, item = {}) => {
         name: 'image',
         id: 'image',
         accept: 'image/*',
-        required: true,
+        required: (item.image === 'image/notimage.jpg' || !item.image),
     });
 
     imageItem.append(imageLabel, imageInput);
@@ -454,14 +455,13 @@ export const createModal = async (data, item = {}) => {
         itemData.image = imageInput.files.length > 0 ?
             await toBase64(imageInput.files[0]) : item.image;
         let success;
-        const inputs = [...modalForm.querySelectorAll('.form__input_item')];
-        const errorMsg = document.querySelector('.input-error');
+        const {inputs, errorMsg} = domElements();
 
         for (const input of inputs) {
-            if (!input.disabled && !input.validity.valid) {
+            if (errorMsg) errorMsg.remove();
+            const errMsg = controlErrorMsg(input);
+            if (errMsg) {
                 input.focus();
-                if (errorMsg) errorMsg.remove();
-                createErrorMsg(input);
                 return;
             }
         }
@@ -507,7 +507,14 @@ export const createModal = async (data, item = {}) => {
             target.value = target.value.replace(/[^А-Я]/gi, '');
         }
 
-        if (target.validity.valid) {
+        if (target === modalForm.description &&
+                target.value.trim().length < 80) {
+            if (errorMsg) errorMsg.remove();
+            controlErrorMsg(target);
+        } else if (target.value.trim() === '') {
+            if (errorMsg) errorMsg.remove();
+            controlErrorMsg(target);
+        } else {
             if (errorMsg) errorMsg.remove();
         }
     });

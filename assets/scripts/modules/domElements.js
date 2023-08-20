@@ -19,6 +19,8 @@ export const domElements = () => {
     const editBtn = document.querySelector('.products__edit-btn');
     const tableRows = document.querySelectorAll('.table__row');
     const imgWarn = document.querySelector('.form__item_add-image-warning');
+    const inputs = [...document.querySelectorAll('.form__input_item')];
+    const errorMsg = document.querySelector('.input-error');
 
     return {
         form,
@@ -41,5 +43,7 @@ export const domElements = () => {
         editBtn,
         tableRows,
         imgWarn,
+        inputs,
+        errorMsg,
     };
 };
