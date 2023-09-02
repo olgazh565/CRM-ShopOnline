@@ -3,6 +3,7 @@ import {domElements} from './domElements.js';
 import {createModal} from './modal.js';
 import {deleteGoods, getItem} from './serviceAPI.js';
 import {
+    createErrorMsg,
     createErrorPopup,
     createImg,
     createRow,
@@ -175,7 +176,25 @@ export const showImg = (tBody) => {
     });
 };
 
-// Добавление товара в модалке
+// сообщение об ошибке при валидации формы
 
-// export const formControl = (data, form, modalOverlay, {id, image} = {}) => {
-// };
+export const controlErrorMsg = input => {
+    const {form} = domElements();
+
+    if (input.disabled) return;
+    if (!input.required) return;
+
+    if (input === form.description && input.value.trim().length < 80) {
+        const errorMsg = createErrorMsg(input);
+        errorMsg.textContent = `
+            Описание должно быть не менее ${input.minLength} символов,
+                вы ввели ${input.value.length}
+        `;
+        return errorMsg;
+    } else if (input.value.trim() === '') {
+        const errorMsg = createErrorMsg(input);
+        errorMsg.textContent = 'Поле обязательно к заполнению';
+        return errorMsg;
+    }
+    return false;
+};

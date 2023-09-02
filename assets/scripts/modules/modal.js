@@ -13,7 +13,9 @@ import {
     controlSuccessMsg,
     editItemData,
     editItemPage,
+    controlErrorMsg,
 } from './controls.js';
+import {domElements} from './domElements.js';
 
 // создание и асинхронное подключение стилей в модалке
 
@@ -104,6 +106,7 @@ export const createModal = async (data, item = {}) => {
         action: 'https://jsonplaceholder.typicode.com/posts',
         method: 'POST',
         target: '_blank',
+        noValidate: true,
     });
 
     const modalFieldset = createElement('fieldset', {
@@ -121,11 +124,12 @@ export const createModal = async (data, item = {}) => {
     });
 
     const nameInput = createElement('input', {
-        className: 'form__input',
+        className: 'form__input form__input_item',
         type: 'text',
         name: 'title',
         id: 'title',
         required: true,
+        // pattern: '^[А-Яа-я\s]+$',
         value: item.title ?? '',
     });
 
@@ -142,11 +146,12 @@ export const createModal = async (data, item = {}) => {
     });
 
     const categoryInput = createElement('input', {
-        className: 'form__input',
+        className: 'form__input form__input_item',
         type: 'text',
         name: 'category',
         id: 'category',
         required: true,
+        // pattern: '^[А-Яа-я\s]+$',
         value: item.category ?? '',
     });
 
@@ -163,11 +168,12 @@ export const createModal = async (data, item = {}) => {
     });
 
     const unitsInput = createElement('input', {
-        className: 'form__input',
+        className: 'form__input form__item_units form__input_item',
         type: 'text',
         name: 'units',
         id: 'units',
         required: true,
+        // pattern: '^[А-Яа-я]+$',
         value: item.units ?? '',
     });
 
@@ -195,11 +201,12 @@ export const createModal = async (data, item = {}) => {
     });
 
     const discountInput = createElement('input', {
-        className: 'form__input form__input_checkbox',
+        className: 'form__input form__input_checkbox form__input_item',
         type: 'number',
         name: 'discount',
         id: 'discount',
         required: true,
+        title: 'Обязательное поле',
         disabled: !item.discount ? true : +item.discount === 0,
         value: !item.discount ? '' : +item.discount === 0 ? '' : item.discount,
     });
@@ -218,10 +225,11 @@ export const createModal = async (data, item = {}) => {
     });
 
     const descriptionInput = createElement('textarea', {
-        className: 'form__input',
+        className: 'form__input form__input_item',
         name: 'description',
         id: 'description',
         rows: '5',
+        minLength: '80',
         required: true,
         value: item.description ?? '',
     });
@@ -239,11 +247,12 @@ export const createModal = async (data, item = {}) => {
     });
 
     const countInput = createElement('input', {
-        className: 'form__input',
+        className: 'form__input form__item_count form__input_item',
         type: 'number',
         name: 'count',
         id: 'count',
         required: true,
+        title: 'Обязательное поле',
         value: item.count ?? '',
     });
 
@@ -260,11 +269,12 @@ export const createModal = async (data, item = {}) => {
     });
 
     const priceInput = createElement('input', {
-        className: 'form__input',
+        className: 'form__input form__item_price form__input_item',
         type: 'number',
         name: 'price',
         id: 'price',
         required: true,
+        title: 'Обязательное поле',
         value: item.price ?? '',
     });
 
@@ -288,15 +298,16 @@ export const createModal = async (data, item = {}) => {
         className: 'form__label-add-image',
         htmlFor: 'image',
         textContent: 'добавить изображение',
+        title: 'Обязательное поле',
     });
 
     const imageInput = createElement('input', {
-        className: 'form__input-add-image',
+        className: 'form__input-add-image form__input_item',
         type: 'file',
         name: 'image',
         id: 'image',
         accept: 'image/*',
-        required: false,
+        required: (item.image === 'image/notimage.jpg' || !item.image),
     });
 
     imageItem.append(imageLabel, imageInput);
@@ -306,8 +317,8 @@ export const createModal = async (data, item = {}) => {
         className: !item.image ?
             'form__item form__item_img-preview img-preview' :
             (item.image !== 'image/notimage.jpg' ?
-            `form__item form__item_img-preview img-preview is-image` :
-            'form__item form__item_img-preview img-preview'),
+                `form__item form__item_img-preview img-preview is-image` :
+                'form__item form__item_img-preview img-preview'),
     });
 
     const imageWrapper = createElement('div', {
@@ -427,6 +438,7 @@ export const createModal = async (data, item = {}) => {
     imageWrapper.addEventListener('click', () => {
         imagePreview.classList.remove('is-image');
         URL.revokeObjectURL(image.src);
+        imageInput.required = true;
 
         if (imageInput.files.length > 0) {
             imageInput.value = null;
@@ -443,9 +455,17 @@ export const createModal = async (data, item = {}) => {
         const itemData = Object.fromEntries(formData);
         itemData.image = imageInput.files.length > 0 ?
             await toBase64(imageInput.files[0]) : item.image;
-        console.log('itemData.image: ', itemData.image);
-
         let success;
+        const {inputs, errorMsg} = domElements();
+
+        for (const input of inputs) {
+            if (errorMsg) errorMsg.remove();
+            const errMsg = controlErrorMsg(input);
+            if (errMsg) {
+                input.focus();
+                return;
+            }
+        }
 
         if (item.id) {
             success = await sendEditItem(
@@ -474,6 +494,29 @@ export const createModal = async (data, item = {}) => {
             countTableTotal(data);
             modalOverlay.remove();
             document.body.style.overflow = '';
+        }
+    });
+
+    modalForm.addEventListener('input', ({target}) => {
+        const errorMsg = document.querySelector('.input-error');
+
+        if (target.closest('.form__item_name') ||
+            target.closest('.form__item_category') ||
+            target.closest('.form__item_description')) {
+            target.value = target.value.replace(/[^А-Я\s]/gi, '');
+        } else if (target.closest('.form__item_units')) {
+            target.value = target.value.replace(/[^А-Я]/gi, '');
+        }
+
+        if (target === modalForm.description &&
+                target.value.trim().length < 80) {
+            if (errorMsg) errorMsg.remove();
+            controlErrorMsg(target);
+        } else if (target.value.trim() === '') {
+            if (errorMsg) errorMsg.remove();
+            controlErrorMsg(target);
+        } else {
+            if (errorMsg) errorMsg.remove();
         }
     });
 

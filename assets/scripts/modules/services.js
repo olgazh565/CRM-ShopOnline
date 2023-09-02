@@ -57,3 +57,4 @@ export const toBase64 = file => new Promise((resolve, reject) => {
     reader.readAsDataURL(file);
 });
 
+

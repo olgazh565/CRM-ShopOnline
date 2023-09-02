@@ -115,3 +115,14 @@ export const createSuccessMsg = () => {
 
     return msg;
 };
+
+// создание ошибки при отправке формы
+
+export const createErrorMsg = input => {
+    const errorMsg = document.createElement('span');
+    errorMsg.classList.add('input-error');
+    input.parentElement.append(errorMsg);
+
+    return errorMsg;
+};
+
