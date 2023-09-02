@@ -18,6 +18,7 @@ export const domElements = () => {
     const errorMessage = document.querySelector('.error__message');
     const editBtn = document.querySelector('.products__edit-btn');
     const tableRows = document.querySelectorAll('.table__row');
+    const imgWarn = document.querySelector('.form__item_add-image-warning');
 
     return {
         form,
@@ -39,5 +40,6 @@ export const domElements = () => {
         errorMessage,
         editBtn,
         tableRows,
+        imgWarn,
     };
 };

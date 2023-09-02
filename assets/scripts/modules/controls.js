@@ -1,11 +1,10 @@
-import {addItemPage} from './render.js';
 import {countTableTotal} from './services.js';
 import {domElements} from './domElements.js';
-import {deleteGoods, getItem, sendEditItem, sendNewItem} from './serviceAPI.js';
+import {createModal} from './modal.js';
+import {deleteGoods, getItem} from './serviceAPI.js';
 import {
     createErrorPopup,
     createImg,
-    createModal,
     createRow,
     createSuccessMsg,
 } from './createElements.js';
@@ -102,47 +101,6 @@ export const editItemPage = (item) => {
     }
 };
 
-// Добавление товара в модалке
-
-export const formControl = (data, form, modalOverlay, id) => {
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const itemData = Object.fromEntries(formData);
-        let success;
-
-        if (id) {
-            success = await sendEditItem(
-                    id,
-                    data,
-                    itemData,
-                    editItemPage,
-                    editItemData,
-                    controlSuccessMsg,
-                    controlErrorMessage,
-            );
-        } else {
-            success = await sendNewItem(
-                    data,
-                    itemData,
-                    addItemPage,
-                    addItemData,
-                    controlSuccessMsg,
-                    controlErrorMessage,
-            );
-        }
-
-        form.reset();
-        blockCheckbox();
-
-        if (success) {
-            countTableTotal(data);
-            modalOverlay.remove();
-            document.body.style.overflow = '';
-        }
-    });
-};
-
 // редактирование товара
 
 export const editItem = async (data, tBody) => {
@@ -150,7 +108,6 @@ export const editItem = async (data, tBody) => {
         const editBtn = target.closest('.products__edit-btn');
         const tableRow = target.closest('.table__row');
         const id = tableRow.dataset.id;
-        console.log('id: ', id);
 
         if (editBtn) {
             const item = await getItem(id, data, createModal);
@@ -166,7 +123,6 @@ export const deleteRow = (data, tBody) => {
         const deleteBtn = target.closest('.products__delete-btn');
         const tableRow = target.closest('.table__row');
         const id = tableRow.dataset.id;
-        console.log('id: ', id);
 
         if (deleteBtn) {
             const success = await deleteGoods(id);
@@ -219,3 +175,7 @@ export const showImg = (tBody) => {
     });
 };
 
+// Добавление товара в модалке
+
+// export const formControl = (data, form, modalOverlay, {id, image} = {}) => {
+// };

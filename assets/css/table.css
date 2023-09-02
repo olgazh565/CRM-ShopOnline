@@ -85,11 +85,7 @@ td {
 }
 
 .products__image-btn {
-    background-image: url('../imgs/picture.svg');
-}
-
-.products__image-btn_active {
-    background-image: url('../imgs/picture.svg');
+    /* background-image: url('../imgs/picture.svg'); */
 }
 
 .products__edit-btn {

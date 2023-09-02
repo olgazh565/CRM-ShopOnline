@@ -39,3 +39,21 @@ export const createElement = (tagName, attribute) => {
     return elem;
 };
 
+// Конвертация изображений в base64
+
+export const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    console.log('reader: ', reader);
+
+    reader.addEventListener('loadend', () => {
+        resolve(reader.result);
+        console.log('reader.result: ', reader.result);
+    });
+
+    reader.addEventListener('error', err => {
+        reject(err);
+    });
+
+    reader.readAsDataURL(file);
+});
+
