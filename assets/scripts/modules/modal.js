@@ -438,6 +438,7 @@ export const createModal = async (data, item = {}) => {
     imageWrapper.addEventListener('click', () => {
         imagePreview.classList.remove('is-image');
         URL.revokeObjectURL(image.src);
+        imageInput.required = true;
 
         if (imageInput.files.length > 0) {
             imageInput.value = null;
