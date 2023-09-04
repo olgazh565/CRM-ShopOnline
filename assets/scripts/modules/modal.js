@@ -1,5 +1,5 @@
 import {addItemPage} from './render.js';
-import {sendEditItem, sendNewItem} from './serviceAPI.js';
+import {getCategories, sendEditItem, sendNewItem} from './serviceAPI.js';
 import {
     countModalTotal,
     countTableTotal,
@@ -46,8 +46,10 @@ export const loadStyle = url => {
 // Модальное окно
 
 export const createModal = async (data, item = {}) => {
-    const style = await loadStyle('./assets/css/modal.css');
-    console.log('style: ', style);
+    await loadStyle('./assets/css/modal.css');
+
+    const categories = await getCategories();
+
     const isItem = Object.keys(item).length !== 0;
 
     const modalOverlay = createElement('div', {
@@ -129,7 +131,6 @@ export const createModal = async (data, item = {}) => {
         name: 'title',
         id: 'title',
         required: true,
-        // pattern: '^[А-Яа-я\s]+$',
         value: item.title ?? '',
     });
 
@@ -151,11 +152,24 @@ export const createModal = async (data, item = {}) => {
         name: 'category',
         id: 'category',
         required: true,
-        // pattern: '^[А-Яа-я\s]+$',
+        autocomplete: 'off',
         value: item.category ?? '',
     });
 
-    categoryItem.append(categoryLabel, categoryInput);
+    categoryInput.setAttribute('list', 'category-list');
+
+    const categoryList = createElement('datalist', {
+        id: 'category-list',
+    });
+
+    categories.map(item => {
+        const categoryOption = createElement('option', {
+            value: item,
+        });
+        categoryList.append(categoryOption);
+    });
+
+    categoryItem.append(categoryLabel, categoryInput, categoryList);
 
     const unitsItem = createElement('div', {
         className: 'form__item',
@@ -173,7 +187,6 @@ export const createModal = async (data, item = {}) => {
         name: 'units',
         id: 'units',
         required: true,
-        // pattern: '^[А-Яа-я]+$',
         value: item.units ?? '',
     });
 
@@ -419,7 +432,7 @@ export const createModal = async (data, item = {}) => {
     imageInput.addEventListener('change', () => {
         if (imageInput.files.length > 0) {
             const src = URL.createObjectURL(imageInput.files[0]);
-            console.log('src: ', src);
+
             image.src = src;
             imagePreview.classList.add('is-image');
 

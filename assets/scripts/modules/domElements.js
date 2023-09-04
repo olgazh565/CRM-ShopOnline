@@ -21,6 +21,9 @@ export const domElements = () => {
     const imgWarn = document.querySelector('.form__item_add-image-warning');
     const inputs = [...document.querySelectorAll('.form__input_item')];
     const errorMsg = document.querySelector('.input-error');
+    const searchForm = document.querySelector('.search');
+    const searchInput = document.querySelector('.search__input');
+
 
     return {
         form,
@@ -45,5 +48,7 @@ export const domElements = () => {
         imgWarn,
         inputs,
         errorMsg,
+        searchForm,
+        searchInput,
     };
 };

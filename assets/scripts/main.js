@@ -7,17 +7,18 @@ import {
     showImg,
     editItem,
     openModal,
+    controlSearch,
 } from './modules/controls.js';
 
 const init = async () => {
     const data = await getGoods(renderGoods, countTableTotal);
-    console.log('data: ', data);
     const {tBody} = domElements();
 
     openModal(data);
     deleteRow(data, tBody);
     editItem(data, tBody);
     showImg(tBody);
+    controlSearch();
 };
 
 init();

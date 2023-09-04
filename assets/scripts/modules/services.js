@@ -43,11 +43,9 @@ export const createElement = (tagName, attribute) => {
 
 export const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
-    console.log('reader: ', reader);
 
     reader.addEventListener('loadend', () => {
         resolve(reader.result);
-        console.log('reader.result: ', reader.result);
     });
 
     reader.addEventListener('error', err => {

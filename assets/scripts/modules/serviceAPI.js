@@ -1,10 +1,10 @@
 import {API_URL} from './const.js';
 
-// Получение данных о товарах с сервера
+// Получение данных о товарах с сервера (всех и по поисковому запросу)
 
-export const getGoods = async (renderGoods, countTableTotal) => {
+export const getGoods = async (renderGoods, countTableTotal, search = '') => {
     try {
-        const response = await fetch(`${API_URL}`);
+        const response = search ? await fetch(`${API_URL}/?search=${search}`) : await fetch(`${API_URL}`);
         const data = await response.json();
 
         renderGoods(data);
@@ -39,7 +39,6 @@ export const sendNewItem = async (
 
         if (response.ok) {
             const itemData = await response.json();
-            console.log('itemData: ', itemData);
 
             addItemPage(itemData);
             addItemData(data, itemData);
@@ -77,7 +76,6 @@ export const sendEditItem = async (
 
         if (response.ok) {
             const itemData = await response.json();
-            console.log('itemData: ', itemData);
 
             editItemPage(itemData);
             editItemData(data, itemData, itemData.id);
@@ -134,4 +132,18 @@ export const getItem = async (id, data, createModal) => {
         console.log(err);
     }
 };
+
+// Запрос списка категорий
+
+export const getCategories = async () => {
+    try {
+        const response = await fetch('https://leaf-serious-chef.glitch.me/api/category');
+        const data = await response.json();
+
+        return data;
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 

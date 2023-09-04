@@ -1,7 +1,7 @@
 import {countTableTotal} from './services.js';
 import {domElements} from './domElements.js';
 import {createModal} from './modal.js';
-import {deleteGoods, getItem} from './serviceAPI.js';
+import {deleteGoods, getGoods, getItem} from './serviceAPI.js';
 import {
     createErrorMsg,
     createErrorPopup,
@@ -9,6 +9,7 @@ import {
     createRow,
     createSuccessMsg,
 } from './createElements.js';
+import {renderGoods} from './render.js';
 
 // Показать сообщение об успешной отправке
 
@@ -102,6 +103,18 @@ export const editItemPage = (item) => {
     }
 };
 
+// открыть модалку
+
+export const openModal = (data) => {
+    const {modalOpenBtn} = domElements();
+
+    modalOpenBtn.addEventListener('click', async () => {
+        await createModal(data);
+        controlCheckbox();
+        document.body.style.overflow = 'hidden';
+    });
+};
+
 // редактирование товара
 
 export const editItem = async (data, tBody) => {
@@ -111,8 +124,7 @@ export const editItem = async (data, tBody) => {
         const id = tableRow.dataset.id;
 
         if (editBtn) {
-            const item = await getItem(id, data, createModal);
-            console.log('item: ', item);
+            await getItem(id, data, createModal);
         }
     });
 };
@@ -126,8 +138,10 @@ export const deleteRow = (data, tBody) => {
         const id = tableRow.dataset.id;
 
         if (deleteBtn) {
-            const success = await deleteGoods(id);
+            const confirmDelete = confirm('ПОДТВЕРДИТЕ УДАЛЕНИЕ ТОВАРА');
+            if (!confirmDelete) return;
 
+            const success = await deleteGoods(id);
             if (!success) return;
 
             tableRow.remove();
@@ -135,18 +149,6 @@ export const deleteRow = (data, tBody) => {
             data.splice(index, 1);
             countTableTotal(data);
         }
-    });
-};
-
-// открыть модалку
-
-export const openModal = (data) => {
-    const {modalOpenBtn} = domElements();
-
-    modalOpenBtn.addEventListener('click', async () => {
-        await createModal(data);
-        controlCheckbox();
-        document.body.style.overflow = 'hidden';
     });
 };
 
@@ -197,4 +199,29 @@ export const controlErrorMsg = input => {
         return errorMsg;
     }
     return false;
+};
+
+// Поиск товара по наименованию и/или описанию
+
+export const controlSearch = () => {
+    const {searchForm, searchInput} = domElements();
+
+    const fetchGoods = async ({target}) => {
+        await getGoods(renderGoods, countTableTotal, target.value);
+    };
+
+    const debounce = (callback, delay = 300) => {
+        let timerID = null;
+
+        return (...arg) => {
+            timerID && clearTimeout(timerID);
+            timerID = setTimeout(callback, delay, ...arg);
+        };
+    };
+
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+    });
+
+    searchInput.addEventListener('input', debounce(fetchGoods));
 };
