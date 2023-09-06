@@ -20,7 +20,7 @@ export const createRow = (obj) => {
         <td class="products__units">${obj.units}</td>
         <td class="products__count">${obj.count}</td>
         <td class="products__price">${obj.price}</td>
-        <td class="products__total">${totalCount > 0 ? totalCount : 0}</td>
+        <td class="products__total">${totalCount > 0 ? totalCount.toFixed(2) : 0}</td>
         <td class="products__image">
             <button class="products__btn products__image-btn products"
                 type="button">

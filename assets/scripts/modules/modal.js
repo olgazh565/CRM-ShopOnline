@@ -424,6 +424,8 @@ export const createModal = async (data, item = {}) => {
 
     modalForm.addEventListener('input', ({target}) => {
         if (target.closest('INPUT') || target.closest('TEXTAREA')) {
+            if ((imageInput.files.length > 0) &&
+                (imageInput.files[0].size > 1000000)) return;
             formButton.disabled = false;
             formButton.classList.remove('is-blocked');
         }
@@ -457,8 +459,6 @@ export const createModal = async (data, item = {}) => {
             imageInput.value = null;
         } else if (item.image) {
             item.image = null;
-            formButton.disabled = false;
-            formButton.classList.remove('is-blocked');
         }
     });
 
