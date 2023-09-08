@@ -23,7 +23,7 @@ export const controlSuccessMsg = () => {
     }, 3000);
 };
 
-// Управление сообщением от ошибке
+// Управление сообщением от ошибке запроса сервера
 
 export const controlErrorMessage = (error, message) => {
     const {formFieldset, formSubmitBtn, modalOverlay} = domElements();

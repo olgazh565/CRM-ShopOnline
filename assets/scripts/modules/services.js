@@ -1,6 +1,6 @@
 import {domElements} from './domElements.js';
 
-// Подсчет общей стоимости в таблице
+// Подсчет общей стоимости товаров в таблице
 
 export const countTableTotal = (array) => {
     const {totalCountPage} = domElements();
@@ -11,7 +11,7 @@ export const countTableTotal = (array) => {
     totalCountPage.textContent = totalCount.toFixed(2);
 };
 
-//  Подсчет общей стоимости в модалке
+//  Подсчет стоимости товара в модалке
 
 export const countModalTotal = (form) => {
     const {
@@ -36,6 +36,7 @@ export const countModalTotal = (form) => {
 export const createElement = (tagName, attribute) => {
     const elem = document.createElement(tagName);
     Object.assign(elem, attribute);
+
     return elem;
 };
 

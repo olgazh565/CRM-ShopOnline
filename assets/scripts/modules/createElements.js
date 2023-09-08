@@ -51,7 +51,7 @@ export const createImg = src => {
     return img;
 };
 
-// сообщение об ошибке
+// сообщение об ошибке запроса сервера
 
 export const createErrorPopup = (error, message) => {
     const {modal} = domElements();

@@ -406,10 +406,11 @@ export const createModal = async (data, item = {}) => {
     modalOverlay.append(modal);
     document.body.append(modalOverlay);
 
+    // Закрытие модального окна, если нет сообщения об ошибке
+
     modalOverlay.addEventListener('click', ({target}) => {
-        if (modalOverlay.classList.contains('is-error')) {
-            return;
-        }
+        if (modalOverlay.classList.contains('is-error')) return;
+
         if (target === modalOverlay ||
             target.closest('.modal__close-btn')) {
             modalOverlay.remove();
@@ -417,10 +418,15 @@ export const createModal = async (data, item = {}) => {
         }
     });
 
+    // управление блокировкой чекбокса
+
     discountCheckbox.addEventListener('change', () => {
         discountInput.disabled = !discountCheckbox.checked;
         discountInput.value = '';
     });
+
+    // разблокировка кнопки отправки формы при изменении в инпутах,
+    //  если не превышен размер изображения
 
     modalForm.addEventListener('input', ({target}) => {
         if (target.closest('INPUT') || target.closest('TEXTAREA')) {
@@ -430,6 +436,8 @@ export const createModal = async (data, item = {}) => {
             formButton.classList.remove('is-blocked');
         }
     });
+
+    // отображение превью и сообщения о превышении размера изображения
 
     imageInput.addEventListener('change', () => {
         if (imageInput.files.length > 0) {
@@ -450,6 +458,8 @@ export const createModal = async (data, item = {}) => {
         }
     });
 
+    // удаление изображения
+
     imageWrapper.addEventListener('click', () => {
         imagePreview.classList.remove('is-image');
         URL.revokeObjectURL(image.src);
@@ -461,6 +471,8 @@ export const createModal = async (data, item = {}) => {
             item.image = null;
         }
     });
+
+    // отправка формы
 
     modalForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -509,6 +521,8 @@ export const createModal = async (data, item = {}) => {
             document.body.style.overflow = '';
         }
     });
+
+    // контроль инпутов и сообщение об ошибке валидации
 
     modalForm.addEventListener('input', ({target}) => {
         const errorMsg = document.querySelector('.input-error');
